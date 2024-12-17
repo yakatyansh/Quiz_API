@@ -20,17 +20,16 @@ public class QuizService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    // To store quiz sessions
     private final Map<String, QuizSession> sessions = new HashMap<>();
 
-    // Start a new session
+
     public String startSession() {
         String sessionId = UUID.randomUUID().toString();
         sessions.put(sessionId, new QuizSession());
         return sessionId;
     }
 
-    // Get a random question
+
     public Question getRandomQuestion(String sessionId) {
         List<Question> questions = questionRepository.findAll();
         if (questions.isEmpty()) throw new RuntimeException("No questions available");
@@ -45,7 +44,7 @@ public class QuizService {
         return question;
     }
 
-    // Submit answer and check correctness
+
     public boolean submitAnswer(String sessionId, Long questionId, String chosenOption) {
         Optional<Question> optionalQuestion = questionRepository.findById(questionId);
         if (optionalQuestion.isEmpty()) throw new RuntimeException("Invalid question ID");
@@ -60,7 +59,6 @@ public class QuizService {
         return isCorrect;
     }
 
-    // Get quiz summary
     public Map<String, Object> getSessionSummary(String sessionId) {
         QuizSession session = sessions.get(sessionId);
         if (session == null) throw new RuntimeException("Invalid session ID");
@@ -68,24 +66,24 @@ public class QuizService {
         return session.getSummary();
     }
 
-    // CRUD operations on questions
 
-    // Create or update a question
+
+
     public Question saveQuestion(Question question) {
         return questionRepository.save(question);
     }
 
-    // Get a question by ID
+
     public Optional<Question> getQuestionById(Long id) {
         return questionRepository.findById(id);
     }
 
-    // Delete a question by ID
+
     public void deleteQuestion(Long id) {
         questionRepository.deleteById(id);
     }
 
-    // Get all questions
+
     public List<Question> getAllQuestions() {
         return questionRepository.findAll();
     }

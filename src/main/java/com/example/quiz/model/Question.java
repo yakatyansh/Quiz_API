@@ -32,7 +32,7 @@ public class Question {
     @Column(name = "correct_option")
     private String correctOption;
 
-    // Getters and setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

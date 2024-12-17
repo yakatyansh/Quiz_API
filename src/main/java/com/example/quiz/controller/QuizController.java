@@ -24,13 +24,13 @@ public class QuizController {
     @Autowired
     private QuizService quizService;
 
-    // Start a new session
+
     @PostMapping("/start")
     public String startSession() {
         return quizService.startSession();
     }
 
-    // Get a random question
+
     @GetMapping("/question/random/{sessionId}")
     public Question getRandomQuestion(@PathVariable String sessionId) {
         return quizService.getRandomQuestion(sessionId);
@@ -43,31 +43,31 @@ public class QuizController {
     }
     
 
-    // Get session summary
+
     @GetMapping("/summary/{sessionId}")
     public Map<String, Object> getSessionSummary(@PathVariable String sessionId) {
         return quizService.getSessionSummary(sessionId);
     }
 
-    // Create or update a question
+
     @PostMapping("/question")
     public Question saveQuestion(@RequestBody Question question) {
         return quizService.saveQuestion(question);
     }
 
-    // Get a question by ID
+
     @GetMapping("/question/{id}")
     public Optional<Question> getQuestionById(@PathVariable Long id) {
         return quizService.getQuestionById(id);
     }
 
-    // Delete a question
+
     @DeleteMapping("/question/{id}")
     public void deleteQuestion(@PathVariable Long id) {
         quizService.deleteQuestion(id);
     }
 
-    // Get all questions
+
     @GetMapping("/questions")
     public List<Question> getAllQuestions() {
         return quizService.getAllQuestions();
