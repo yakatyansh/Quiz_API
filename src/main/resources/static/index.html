@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz API Tester</title>
+</head>
+<body>
+    <h1>Quiz API Tester</h1>
+
+    <!-- GET All Questions -->
+    <button onclick="getAllQuestions()">Get All Questions</button>
+    <div id="all-questions"></div>
+
+    <!-- GET Question by ID -->
+    <h3>Get Question by ID:</h3>
+    <input type="number" id="questionId" placeholder="Enter ID">
+    <button onclick="getQuestionById()">Get Question</button>
+    <div id="single-question"></div>
+
+    <!-- POST Add Question -->
+    <h3>Add New Question:</h3>
+    <input type="text" id="questionText" placeholder="Question Text"><br>
+    <input type="text" id="optionA" placeholder="Option A">
+    <input type="text" id="optionB" placeholder="Option B">
+    <input type="text" id="optionC" placeholder="Option C">
+    <input type="text" id="optionD" placeholder="Option D">
+    <input type="text" id="correctOption" placeholder="Correct Option"><br>
+    <button onclick="addQuestion()">Add Question</button>
+    <div id="add-result"></div>
+
+    <script>
+        const baseUrl = "http://localhost:8080/quiz/question";
+
+        // GET All Questions
+        function getAllQuestions() {
+            fetch(baseUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("all-questions").innerText = JSON.stringify(data, null, 2);
+                });
+        }
+
+        // GET Question by ID
+        function getQuestionById() {
+            const id = document.getElementById("questionId").value;
+            fetch(`${baseUrl}/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("single-question").innerText = JSON.stringify(data, null, 2);
+                });
+        }
+
+        // POST Add Question
+        function addQuestion() {
+            const question = {
+                questionText: document.getElementById("questionText").value,
+                optionA: document.getElementById("optionA").value,
+                optionB: document.getElementById("optionB").value,
+                optionC: document.getElementById("optionC").value,
+                optionD: document.getElementById("optionD").value,
+                correctOption: document.getElementById("correctOption").value
+            };
+
+            fetch(baseUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(question)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("add-result").innerText = "Question Added: " + JSON.stringify(data);
+                });
+        }
+    </script>
+</body>
+</html>
