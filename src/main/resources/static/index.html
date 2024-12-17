@@ -1,77 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz API Tester</title>
-</head>
-<body>
-    <h1>Quiz API Tester</h1>
-
-    <!-- GET All Questions -->
-    <button onclick="getAllQuestions()">Get All Questions</button>
-    <div id="all-questions"></div>
-
-    <!-- GET Question by ID -->
-    <h3>Get Question by ID:</h3>
-    <input type="number" id="questionId" placeholder="Enter ID">
-    <button onclick="getQuestionById()">Get Question</button>
-    <div id="single-question"></div>
-
-    <!-- POST Add Question -->
-    <h3>Add New Question:</h3>
-    <input type="text" id="questionText" placeholder="Question Text"><br>
-    <input type="text" id="optionA" placeholder="Option A">
-    <input type="text" id="optionB" placeholder="Option B">
-    <input type="text" id="optionC" placeholder="Option C">
-    <input type="text" id="optionD" placeholder="Option D">
-    <input type="text" id="correctOption" placeholder="Correct Option"><br>
-    <button onclick="addQuestion()">Add Question</button>
-    <div id="add-result"></div>
-
+    <title>Quiz App</title>
     <script>
-        const baseUrl = "http://localhost:8080/quiz/question";
+        let sessionId;
 
-        // GET All Questions
-        function getAllQuestions() {
-            fetch(baseUrl)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("all-questions").innerText = JSON.stringify(data, null, 2);
-                });
+        async function startSession() {
+            const response = await fetch('/quiz/start', { method: 'POST' });
+            const result = await response.text();
+            sessionId = result.split("Session ID: ")[1];
+            alert("Session started: " + sessionId);
         }
 
-        // GET Question by ID
-        function getQuestionById() {
-            const id = document.getElementById("questionId").value;
-            fetch(`${baseUrl}/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("single-question").innerText = JSON.stringify(data, null, 2);
-                });
+        async function fetchQuestion() {
+            const response = await fetch(`/quiz/question/${sessionId}`);
+            const question = await response.json();
+            console.log(question);
+            document.getElementById("question").innerText = question.questionText;
         }
 
-        // POST Add Question
-        function addQuestion() {
-            const question = {
-                questionText: document.getElementById("questionText").value,
-                optionA: document.getElementById("optionA").value,
-                optionB: document.getElementById("optionB").value,
-                optionC: document.getElementById("optionC").value,
-                optionD: document.getElementById("optionD").value,
-                correctOption: document.getElementById("correctOption").value
-            };
+        async function submitAnswer() {
+            const questionId = 1; // Replace with dynamic question ID
+            const chosenOption = document.getElementById("answer").value;
 
-            fetch(baseUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(question)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("add-result").innerText = "Question Added: " + JSON.stringify(data);
-                });
+            const response = await fetch(`/quiz/submit/${sessionId}?questionId=${questionId}&chosenOption=${chosenOption}`, {
+                method: 'POST'
+            });
+            const result = await response.text();
+            alert(result);
+        }
+
+        async function getSummary() {
+            const response = await fetch(`/quiz/summary/${sessionId}`);
+            const summary = await response.json();
+            console.log(summary);
+            document.getElementById("summary").innerText = JSON.stringify(summary, null, 2);
         }
     </script>
+</head>
+<body>
+    <h1>Quiz App</h1>
+    <button onclick="startSession()">Start Quiz</button>
+    <button onclick="fetchQuestion()">Fetch Question</button>
+    <p id="question"></p>
+
+    <input type="text" id="answer" placeholder="Your Answer" />
+    <button onclick="submitAnswer()">Submit Answer</button>
+
+    <h2>Summary</h2>
+    <button onclick="getSummary()">Get Summary</button>
+    <pre id="summary"></pre>
 </body>
 </html>

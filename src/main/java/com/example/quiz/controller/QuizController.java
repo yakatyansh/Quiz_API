@@ -1,18 +1,14 @@
 package com.example.quiz.controller;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quiz.model.Question;
@@ -23,32 +19,36 @@ import com.example.quiz.service.QuizService;
 public class QuizController {
 
     @Autowired
-    private QuizService quizService;
+    private QuizService questionService;
 
-    @GetMapping("/question")
-    public List<Question> getAllQuestions() {
-        return quizService.getAllQuestions();
-    }
-
-    @GetMapping("/question/{id}")
-    public Optional<Question> getQuestionById(@PathVariable Long id) {
-        return quizService.getQuestionById(id);
+    // 1. Start a new quiz session
+    @PostMapping("/start")
+    public ResponseEntity<String> startQuiz() {
+        String sessionId = questionService.startSession();
+        return ResponseEntity.ok("Session ID: " + sessionId);
     }
 
-    @PostMapping("/question")
-    public ResponseEntity<String> addQuestion(@RequestBody Question question) {
-        quizService.addQuestion(question);
-        return ResponseEntity.ok("Question added successfully!");
-    }
-    @DeleteMapping("/question/{id}")
-    public ResponseEntity<String> deleteQuestion(@PathVariable Long id) {
-        quizService.deleteQuestion(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Question deleted successfully!");
-    }
-    @PutMapping("/question/{id}")
-    public ResponseEntity<Question> updateQuestion(@PathVariable Long id, @RequestBody Question updatedQuestion) {
-        Question question = quizService.updateQuestion(id, updatedQuestion);
+    // 2. Fetch a random question
+    @GetMapping("/question/{sessionId}")
+    public ResponseEntity<Question> getRandomQuestion(@PathVariable String sessionId) {
+        Question question = questionService.getRandomQuestion(sessionId);
         return ResponseEntity.ok(question);
     }
-    
+
+    // 3. Submit an answer
+    @PostMapping("/submit/{sessionId}")
+    public ResponseEntity<String> submitAnswer(
+            @PathVariable String sessionId,
+            @RequestParam Long questionId,
+            @RequestParam String chosenOption) {
+        boolean isCorrect = questionService.submitAnswer(sessionId, questionId, chosenOption);
+        return ResponseEntity.ok(isCorrect ? "Correct!" : "Incorrect!");
+    }
+
+    // 4. Get session summary
+    @GetMapping("/summary/{sessionId}")
+    public ResponseEntity<Map<String, Object>> getSummary(@PathVariable String sessionId) {
+        Map<String, Object> summary = questionService.getSessionSummary(sessionId);
+        return ResponseEntity.ok(summary);
+    }
 }
