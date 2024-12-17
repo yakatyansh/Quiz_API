@@ -31,16 +31,17 @@ public class QuizController {
     }
 
     // Get a random question
-    @GetMapping("/question/{sessionId}")
+    @GetMapping("/question/random/{sessionId}")
     public Question getRandomQuestion(@PathVariable String sessionId) {
         return quizService.getRandomQuestion(sessionId);
     }
-
-    // Submit an answer
     @PostMapping("/answer/{sessionId}")
-    public boolean submitAnswer(@PathVariable String sessionId, @RequestParam Long questionId, @RequestParam String chosenOption) {
+    public boolean submitAnswer(@PathVariable String sessionId, 
+                                @RequestParam Long questionId, 
+                                @RequestParam String chosenOption) {                    
         return quizService.submitAnswer(sessionId, questionId, chosenOption);
     }
+    
 
     // Get session summary
     @GetMapping("/summary/{sessionId}")

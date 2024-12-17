@@ -9,7 +9,7 @@ document.getElementById("create-question-form").addEventListener("submit", creat
 document.getElementById("load-questions-btn").addEventListener("click", loadAllQuestions);
 
 function startNewSession() {
-    fetch('/api/quiz/start', {
+    fetch('http://localhost:8080/api/quiz/start', {
         method: 'POST',
     })
     .then(response => response.text())
@@ -23,7 +23,7 @@ function startNewSession() {
 }
 
 function loadNextQuestion() {
-    fetch(`/api/quiz/question/${sessionId}`)
+    fetch(`http://localhost:8080/api/quiz/question/random/${sessionId}`)
     .then(response => response.json())
     .then(question => {
         document.getElementById("question-text").textContent = question.questionText;
@@ -33,6 +33,14 @@ function loadNextQuestion() {
         document.getElementById("optionD").textContent = question.optionD;
         questionList.push(question);
         document.getElementById("next-question-btn").style.display = 'none';
+        
+        const optionButtons = document.getElementById("options").querySelectorAll('button');
+        optionButtons.forEach(button => {
+            // Remove any existing event listeners
+            button.replaceWith(button.cloneNode(true));
+        });
+
+        // Re-attach event listeners to the fresh buttons
         document.getElementById("options").querySelectorAll('button').forEach(button => {
             button.addEventListener("click", (e) => submitAnswer(e.target.id, question));
         });
@@ -40,22 +48,34 @@ function loadNextQuestion() {
 }
 
 function submitAnswer(chosenOption, question) {
-    fetch(`/api/quiz/answer/${sessionId}?questionId=${question.id}&chosenOption=${chosenOption}`, {
+    fetch(`http://localhost:8080/api/quiz/answer/${sessionId}?questionId=${question.id}&chosenOption=${chosenOption}`, {
         method: 'POST'
     })
-    .then(response => response.json())
+    .then(response => {
+        // Ensure the response is properly converted to JSON
+        return response.json();
+    })
     .then(isCorrect => {
-        if (isCorrect) {
+        console.log("Is Correct Response: ", isCorrect); 
+        console.log("Chosen Option:", chosenOption);// Debugging line
+        if (isCorrect === true) {
             alert("Correct Answer!");
-        } else {
+        } else if (isCorrect === false) {
             alert("Wrong Answer!");
+        } else {
+            alert("Unexpected response from server.");
         }
         document.getElementById("next-question-btn").style.display = 'block';
+    })
+    .catch(error => {
+        console.error("Error in submitAnswer: ", error);
+        alert("An error occurred. Please try again.");
     });
 }
 
+
 function loadSessionSummary() {
-    fetch(`/api/quiz/summary/${sessionId}`)
+    fetch(`http://localhost:8080/api/quiz/summary/${sessionId}`)
     .then(response => response.json())
     .then(summary => {
         document.getElementById("total-questions").textContent = summary.totalQuestionsAsked;
@@ -73,7 +93,7 @@ function restartQuiz() {
 }
 
 function loadAllQuestions() {
-    fetch('/api/quiz/questions')
+    fetch('http://localhost:8080/api/quiz/questions')
     .then(response => response.json())
     .then(questions => {
         const questionsListDiv = document.getElementById("questions-list");
@@ -98,7 +118,7 @@ function createQuestion(event) {
         correctOption: document.getElementById("new-correct-option").value,
     };
     
-    fetch('/api/quiz/question', {
+    fetch('http://localhost:8080/api/quiz/question', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newQuestion)
