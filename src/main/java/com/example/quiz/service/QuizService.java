@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.quiz.model.Question;
+import com.example.quiz.model.QuizSession;
 import com.example.quiz.repository.QuestionRepository;
 
 @Service
@@ -34,11 +35,13 @@ public class QuizService {
         List<Question> questions = questionRepository.findAll();
         if (questions.isEmpty()) throw new RuntimeException("No questions available");
 
+        QuizSession session = sessions.get(sessionId);
+        if (session == null) throw new RuntimeException("Invalid session ID");
+
         Random random = new Random();
         Question question = questions.get(random.nextInt(questions.size()));
 
-        // Track question in the session
-        sessions.get(sessionId).addQuestion(question);
+        session.addQuestion(question);
         return question;
     }
 
@@ -50,14 +53,40 @@ public class QuizService {
         Question question = optionalQuestion.get();
         boolean isCorrect = question.getCorrectOption().equalsIgnoreCase(chosenOption);
 
-        // Track answer in the session
-        sessions.get(sessionId).addAnswer(question, isCorrect);
+        QuizSession session = sessions.get(sessionId);
+        if (session == null) throw new RuntimeException("Invalid session ID");
+
+        session.addAnswer(question, isCorrect);
         return isCorrect;
     }
 
     // Get quiz summary
     public Map<String, Object> getSessionSummary(String sessionId) {
-        return sessions.get(sessionId).getSummary();
+        QuizSession session = sessions.get(sessionId);
+        if (session == null) throw new RuntimeException("Invalid session ID");
+
+        return session.getSummary();
     }
 
+    // CRUD operations on questions
+
+    // Create or update a question
+    public Question saveQuestion(Question question) {
+        return questionRepository.save(question);
+    }
+
+    // Get a question by ID
+    public Optional<Question> getQuestionById(Long id) {
+        return questionRepository.findById(id);
+    }
+
+    // Delete a question by ID
+    public void deleteQuestion(Long id) {
+        questionRepository.deleteById(id);
+    }
+
+    // Get all questions
+    public List<Question> getAllQuestions() {
+        return questionRepository.findAll();
+    }
 }

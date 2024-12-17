@@ -1,54 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz App</title>
-    <script>
-        let sessionId;
-
-        async function startSession() {
-            const response = await fetch('/quiz/start', { method: 'POST' });
-            const result = await response.text();
-            sessionId = result.split("Session ID: ")[1];
-            alert("Session started: " + sessionId);
-        }
-
-        async function fetchQuestion() {
-            const response = await fetch(`/quiz/question/${sessionId}`);
-            const question = await response.json();
-            console.log(question);
-            document.getElementById("question").innerText = question.questionText;
-        }
-
-        async function submitAnswer() {
-            const questionId = 1; // Replace with dynamic question ID
-            const chosenOption = document.getElementById("answer").value;
-
-            const response = await fetch(`/quiz/submit/${sessionId}?questionId=${questionId}&chosenOption=${chosenOption}`, {
-                method: 'POST'
-            });
-            const result = await response.text();
-            alert(result);
-        }
-
-        async function getSummary() {
-            const response = await fetch(`/quiz/summary/${sessionId}`);
-            const summary = await response.json();
-            console.log(summary);
-            document.getElementById("summary").innerText = JSON.stringify(summary, null, 2);
-        }
-    </script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Quiz App</h1>
-    <button onclick="startSession()">Start Quiz</button>
-    <button onclick="fetchQuestion()">Fetch Question</button>
-    <p id="question"></p>
+    <div id="quiz-container">
+        <h1>Quiz Application</h1>
 
-    <input type="text" id="answer" placeholder="Your Answer" />
-    <button onclick="submitAnswer()">Submit Answer</button>
+        <!-- Start Session Section -->
+        <div id="start-section">
+            <button id="start-session-btn">Start New Quiz Session</button>
+            <p id="session-id">Session ID: <span></span></p>
+        </div>
 
-    <h2>Summary</h2>
-    <button onclick="getSummary()">Get Summary</button>
-    <pre id="summary"></pre>
+        <!-- Question Section -->
+        <div id="question-section" style="display:none;">
+            <div id="question-container">
+                <h2 id="question-text"></h2>
+                <div id="options">
+                    <button class="option-btn" id="optionA"></button>
+                    <button class="option-btn" id="optionB"></button>
+                    <button class="option-btn" id="optionC"></button>
+                    <button class="option-btn" id="optionD"></button>
+                </div>
+                <button id="next-question-btn" style="display:none;">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div id="summary-section" style="display:none;">
+            <h2>Quiz Summary</h2>
+            <p>Total Questions Asked: <span id="total-questions"></span></p>
+            <p>Correct Answers: <span id="correct-answers"></span></p>
+            <p><button id="new-quiz-btn">Start a New Quiz</button></p>
+        </div>
+
+        <!-- CRUD Operations Section -->
+        <div id="crud-section">
+            <h2>CRUD Operations on Questions</h2>
+            <button id="load-questions-btn">Load All Questions</button>
+            <div id="questions-list"></div>
+
+            <h3>Create New Question</h3>
+            <form id="create-question-form">
+                <input type="text" id="new-question-text" placeholder="Question Text" required>
+                <input type="text" id="new-optionA" placeholder="Option A" required>
+                <input type="text" id="new-optionB" placeholder="Option B" required>
+                <input type="text" id="new-optionC" placeholder="Option C" required>
+                <input type="text" id="new-optionD" placeholder="Option D" required>
+                <input type="text" id="new-correct-option" placeholder="Correct Option" required>
+                <button type="submit">Create Question</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
