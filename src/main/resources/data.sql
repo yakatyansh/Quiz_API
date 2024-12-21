@@ -13,4 +13,11 @@ VALUES
 ('What is 2 + 2?', '3', '4', '5', '6', 'B'),
 ('What is the capital of France?', 'Berlin', 'Madrid', 'Paris', 'Rome', 'C'),
 ('Which language runs on the JVM?', 'C++', 'Python', 'Java', 'Ruby', 'C'),
-('Which indian airport is the first airport to operate completely on solar panel','Cochin','Patna','Mumbai','Raipur','A');
+('Which indian airport is the first airport to operate completely on solar panel','Cochin','Patna','Mumbai','Raipur','A'),
+('What is the largest planet in our solar system?', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'C'),
+('Who wrote "To Kill a Mockingbird"?', 'Harper Lee', 'Mark Twain', 'Ernest Hemingway', 'F. Scott Fitzgerald', 'A'),
+('What is the boiling point of water?', '90°C', '100°C', '110°C', '120°C', 'B'),
+('Which element has the chemical symbol "O"?', 'Oxygen', 'Gold', 'Silver', 'Iron', 'A'),
+('What is the capital of Japan?', 'Seoul', 'Beijing', 'Tokyo', 'Bangkok', 'C'),
+('Who painted the Mona Lisa?', 'Vincent van Gogh', 'Pablo Picasso', 'Leonardo da Vinci', 'Claude Monet', 'C');
+
