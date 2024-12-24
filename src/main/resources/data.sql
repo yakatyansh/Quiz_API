@@ -12,7 +12,7 @@ INSERT INTO question (question_text, option_a, option_b, option_c, option_d, cor
 VALUES 
 ('What is 2 + 2?', '3', '4', '5', '6', 'optionB'),
 ('What is the capital of France?', 'Berlin', 'Madrid', 'Paris', 'Rome', 'optionC'),
-('Which language runs on the JVM?', 'C++', 'Python', 'Java', 'Ruby', 'C'),
+('Which language runs on the JVM?', 'C++', 'Python', 'Java', 'Ruby', 'optionC'),
 ('Which indian airport is the first airport to operate completely on solar panel','Cochin','Patna','Mumbai','Raipur','optionA'),
 ('What is the largest planet in our solar system?', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'optionC'),
 ('Who wrote "To Kill a Mockingbird"?', 'Harper Lee', 'Mark Twain', 'Ernest Hemingway', 'F. Scott Fitzgerald', 'optionA'),
