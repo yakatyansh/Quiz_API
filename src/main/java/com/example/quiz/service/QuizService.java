@@ -48,16 +48,17 @@ public class QuizService {
     public boolean submitAnswer(String sessionId, Long questionId, String chosenOption) {
         Optional<Question> optionalQuestion = questionRepository.findById(questionId);
         if (optionalQuestion.isEmpty()) throw new RuntimeException("Invalid question ID");
-
+    
         Question question = optionalQuestion.get();
-        boolean isCorrect = question.getCorrectOption().equalsIgnoreCase(chosenOption);
-
-        QuizSession session = sessions.get(sessionId);
-        if (session == null) throw new RuntimeException("Invalid session ID");
-
-        session.addAnswer(question, isCorrect);
+    
+        String normalizedChosenOption = chosenOption.replace("Option", "").trim(); 
+        boolean isCorrect = question.getCorrectOption().trim().equalsIgnoreCase(normalizedChosenOption);
+    
+        // Track the answer in the session
+        sessions.get(sessionId).addAnswer(question, isCorrect);
         return isCorrect;
     }
+    
 
     public Map<String, Object> getSessionSummary(String sessionId) {
         QuizSession session = sessions.get(sessionId);
