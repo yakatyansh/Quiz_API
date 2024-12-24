@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QuizSession {
-    private Map<Question, Boolean> questionAnswerMap = new HashMap<>();
+    private final Map<Question, Boolean> questionAnswerMap = new HashMap<>();
     private int correctAnswers = 0;
     private int totalQuestionsAsked = 0;
 
